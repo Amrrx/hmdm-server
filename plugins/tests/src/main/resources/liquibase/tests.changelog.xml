@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~
+  ~ Headwind MDM: Open Source Android MDM Software
+  ~ https://h-mdm.com
+  ~
+  ~ Copyright (C) 2019 Headwind Solutions LLC (http://h-sms.com)
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~
+  -->
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd"
+        logicalFilePath="tests.changelog.xml">
+
+    <!--
+    The change set IDs MUST start with "plugin-<plugin identifier>" followed by dash symbol ALWAYS.
+    The database object names declared by plugin MUST always start with "plugin_<plugin identifier>" followed by underscore
+    symbol.
+    -->
+
+    <changeSet id="plugin-tests-20.01.2025-22:25" author="amr" context="common">
+        <comment>Plugin,new: tests</comment>
+        <sql>
+            INSERT INTO plugins (
+            identifier, name, description,
+            javascriptModuleFile,
+            functionsViewTemplate,
+            settingsViewTemplate,
+            namelocalizationkey,
+            settingsPermission, functionsPermission, deviceFunctionsPermission
+            )
+            VALUES (
+            'tests', 'Testing Suite...', 'Mobile phones testing suites',
+            'app/components/plugins/tests/tests.module.js',
+            'app/components/plugins/tests/views/tests.html',
+            NULL,
+            'plugin.tests.localization.key.name',
+            'plugin_tests_access',
+            'plugin_tests_access',
+            'plugin_tests_access'
+            );
+        </sql>
+        <rollback>
+            DELETE FROM plugins WHERE identifier = 'tests';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="plugin-tests-20.01.2025-22:20" author="amr" context="common">
+        <comment>Permission,new: plugin_tests_access</comment>
+        <sql>
+            INSERT INTO permissions (name, description) VALUES ('plugin_tests_access', 'Access to Testing suite');
+            INSERT INTO userRolePermissions (roleId, permissionId) VALUES (1, currval('permissions_id_seq'));
+            INSERT INTO userRolePermissions (roleId, permissionId) VALUES (2, currval('permissions_id_seq'));
+            INSERT INTO userRolePermissions (roleId, permissionId) VALUES (3, currval('permissions_id_seq'));
+        </sql>
+        <rollback>
+            DELETE FROM permissions WHERE name = 'plugin_tests_access';
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
