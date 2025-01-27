@@ -34,7 +34,7 @@
     symbol.
     -->
 
-    <changeSet id="plugin-tests-20.01.2025-22:25" author="amr" context="common">
+    <changeSet id="plugin-tests-27.01.2025-22:25" author="amr" context="common">
         <comment>Plugin,new: tests</comment>
         <sql>
             INSERT INTO plugins (
@@ -43,17 +43,19 @@
             functionsViewTemplate,
             settingsViewTemplate,
             namelocalizationkey,
-            settingsPermission, functionsPermission, deviceFunctionsPermission
+            settingsPermission, functionsPermission, deviceFunctionsPermission,
+            enabledForDevice
             )
             VALUES (
             'tests', 'Testing Suite...', 'Mobile phones testing suites',
             'app/components/plugins/tests/tests.module.js',
             'app/components/plugins/tests/views/tests.html',
-            NULL,
+            'app/components/plugins/tests/views/settings.html',
             'plugin.tests.localization.key.name',
-            'plugin_tests_access',
-            'plugin_tests_access',
-            'plugin_tests_access'
+            'plugin_tests_delete',
+            'plugin_tests_send',
+            'plugin_tests_send',
+            TRUE
             );
         </sql>
         <rollback>
@@ -61,16 +63,61 @@
         </rollback>
     </changeSet>
 
-    <changeSet id="plugin-tests-20.01.2025-22:20" author="amr" context="common">
-        <comment>Permission,new: plugin_tests_access</comment>
+    <changeSet id="plugin-tests-21.01.2025-22:20" author="amr" context="common">
+        <comment>Permission,new: plugin_tests_access, plugin_tests_send, plugin_tests_delete</comment>
+<!--        <comment>Permission,new: plugin_tests_access</comment>-->
         <sql>
-            INSERT INTO permissions (name, description) VALUES ('plugin_tests_access', 'Access to Testing suite');
-            INSERT INTO userRolePermissions (roleId, permissionId) VALUES (1, currval('permissions_id_seq'));
-            INSERT INTO userRolePermissions (roleId, permissionId) VALUES (2, currval('permissions_id_seq'));
-            INSERT INTO userRolePermissions (roleId, permissionId) VALUES (3, currval('permissions_id_seq'));
+               -- Insert permission 1
+               INSERT INTO permissions (name, description) VALUES ('plugin_tests_access', 'Access to Testing suite');
+               -- Assign permission 1 to all roles
+               INSERT INTO userRolePermissions (roleId, permissionId)
+               SELECT id, currval('permissions_id_seq') FROM userroles;
+
+               -- Insert permission 2
+               INSERT INTO permissions (name, description) VALUES ('plugin_tests_send', 'Can send messages to devices');
+               -- Assign permission 2 to all roles
+               INSERT INTO userRolePermissions (roleId, permissionId)
+               SELECT id, currval('permissions_id_seq') FROM userroles;
+
+
+               -- Insert permission 3
+               INSERT INTO permissions (name, description) VALUES ('plugin_tests_delete', '...');
+               -- Assign permission 3 to all roles
+               INSERT INTO userRolePermissions (roleId, permissionId)
+               SELECT id, currval('permissions_id_seq') FROM userroles;
+
+
+
+--             INSERT INTO permissions (name, description) VALUES ('plugin_tests_access', 'Access to Testing suite');
+--             INSERT INTO permissions (name, description) VALUES ('plugin_tests_send', 'Can send messages to devices');
+--             SELECT id, currval('permissions_id_seq')
+--             FROM userroles;
+--             INSERT INTO permissions (name, description) VALUES ('plugin_tests_delete', 'Can delete and update message history');
+--             INSERT INTO userRolePermissions (roleId, permissionId) VALUES (1, currval('permissions_id_seq'));
+--             INSERT INTO userRolePermissions (roleId, permissionId) VALUES (2, currval('permissions_id_seq'));
+--             INSERT INTO userRolePermissions (roleId, permissionId) VALUES (3, currval('permissions_id_seq'));
         </sql>
         <rollback>
             DELETE FROM permissions WHERE name = 'plugin_tests_access';
+            DELETE FROM permissions WHERE name = 'plugin_tests_send';
+            DELETE FROM permissions WHERE name = 'plugin_tests_delete';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="plugin-tests-21.01.2025-10:53" author="amr" context="common">
+        <comment>Table,new: plugin_tests_messages</comment>
+        <sql>
+            CREATE TABLE plugin_tests_messages (
+                                                       id serial NOT NULL CONSTRAINT plugin_tests_messages_pr_key PRIMARY KEY,
+                                                       customerId INT NOT NULL REFERENCES customers (id) ON DELETE CASCADE,
+                                                       deviceId INT NOT NULL REFERENCES devices (id) ON DELETE CASCADE,
+                                                       ts BIGINT NOT NULL,
+                                                       message VARCHAR(5000),
+                                                       status INT NOT NULL
+            );
+        </sql>
+        <rollback>
+            DROP TABLE plugin_tests_messages;
         </rollback>
     </changeSet>
 

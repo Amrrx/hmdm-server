@@ -1,0 +1,77 @@
+<!-- Localization completed -->
+<div ng-show='errorMessage' class='modal-header'>
+    <div ng-show='errorMessage' class='error'><span>{{errorMessage}}</span></div>
+</div>
+<div class='modal-body'>
+    <form class='form-horizontal'>
+
+
+        <div class='form-group'>
+            <label class='col-sm-4 control-label' localized>plugin.tests.label.scope</label>
+            <div class='col-sm-8'>
+                <select class='form-control'
+                        ng-model='test.scope'>
+                    <option ng-value="'device'" ng-selected="true"
+                            localized>plugin.tests.scope.device</option>
+                    <option ng-value="'group'"
+                            localized>plugin.tests.scope.group</option>
+                    <option ng-value="'configuration'"
+                            localized>plugin.tests.scope.configuration</option>
+                    <option ng-value="'all'"
+                            localized>plugin.tests.scope.all</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group" ng-if="test.scope == 'device'">
+            <label class='col-sm-4 control-label' localized>plugin.tests.label.device</label>
+            <div class="col-sm-8">
+                <input type="text"
+                       ng-model="test.deviceNumber"
+                       localized-placeholder="search.placeholder.device"
+                       autocomplete="off"
+                       class="form-control"
+                       typeahead="device for device in getDevices($viewValue)"
+                       typeahead-loading="loadingDevices"
+                       typeahead-wait-ms="300"
+                       typeahead-focus-first="false"
+                       typeahead-input-formatter="deviceLookupFormatter($model)"
+                       typeahead-no-results="noResults"/>
+            </div>
+        </div>
+
+        <div class='form-group' ng-if="test.scope == 'group'">
+            <label class='col-sm-4 control-label' localized>plugin.tests.label.group</label>
+            <div class='col-sm-8'>
+                <select class='form-control'
+                        ng-model='test.groupId'
+                        ng-options="group.id as group.name for group in groups">
+                </select>
+            </div>
+        </div>
+
+        <div class='form-group' ng-if="test.scope == 'configuration'">
+            <label class='col-sm-4 control-label' localized>plugin.tests.label.configuration</label>
+            <div class='col-sm-8'>
+                <select class='form-control'
+                        ng-model='test.configurationId'
+                        ng-options="configuration.id as configuration.name for configuration in configurations">
+                </select>
+            </div>
+        </div>
+
+        <div class='form-group'>
+            <label class='col-sm-4 control-label' localized>plugin.tests.label.message</label>
+            <div class='col-sm-8'>
+                <textarea ng-model='test.message' class='form-control no-resize' rows="5"></textarea>
+            </div>
+        </div>
+
+        <div class='form-group'>
+            <div class='col-sm-offset-3 col-sm-9'>
+                <button type='submit' class='btn btn-default' ng-click='send()' ng-disabled="sending" localized>plugin.tests.button.send</button>
+                <button type='button' class='btn btn-default' ng-click='closeModal()' localized>button.cancel</button>
+            </div>
+        </div>
+    </form>
+</div>

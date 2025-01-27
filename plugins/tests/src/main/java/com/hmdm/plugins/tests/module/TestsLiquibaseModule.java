@@ -19,7 +19,7 @@
  *
  */
 
-package com.hmdm.plugins.test.module;
+package com.hmdm.plugins.tests.module;
 
 import com.hmdm.guice.module.AbstractLiquibaseModule;
 import com.hmdm.plugin.guice.module.PluginLiquibaseResourceAccessor;

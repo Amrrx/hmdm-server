@@ -19,11 +19,13 @@
  *
  */
 
-package com.hmdm.plugins.test;
+package com.hmdm.plugins.tests;
 
 import com.google.inject.Module;
 import com.hmdm.plugin.PluginConfiguration;
-import com.hmdm.plugins.test.module.TestsLiquibaseModule;
+import com.hmdm.plugins.tests.module.TestsLiquibaseModule;
+import com.hmdm.plugins.tests.module.TestsPersistenceModule;
+import com.hmdm.plugins.tests.module.TestsRestModule;
 
 import javax.servlet.ServletContext;
 import java.util.ArrayList;
@@ -76,6 +78,8 @@ public class TestsPluginConfigurationImpl implements PluginConfiguration {
         List<Module> modules = new ArrayList<>();
 
         modules.add(new TestsLiquibaseModule(context));
+        modules.add(new TestsPersistenceModule(context));
+        modules.add(new TestsRestModule());
 
         return modules;
     }
